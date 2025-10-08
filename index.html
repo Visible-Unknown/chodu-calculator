@@ -1,848 +1,901 @@
 <!DOCTYPE html>
 <html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>চদু ক্যালকুলেটর - আপনার চদু লেভেল জানুন!</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Kalpurush', 'SolaimanLipi', Arial, sans-serif;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Kalpurush", "SolaimanLipi", Arial, sans-serif;
+      }
+
+      :root {
+        --primary: #e74c3c;
+        --secondary: #f39c12;
+        --dark: #2c3e50;
+        --light: #ecf0f1;
+        --accent: #9b59b6;
+      }
+
+      body {
+        background: linear-gradient(135deg, #ff6b6b, #feca57);
+        color: #333;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      header {
+        background: var(--dark);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: var(--secondary);
+      }
+
+      .tagline {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .progress-container {
+        height: 10px;
+        background: #ddd;
+        width: 100%;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        width: 0%;
+        transition: width 0.5s ease;
+      }
+
+      .screen {
+        display: none;
+        padding: 30px;
+      }
+
+      .active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-        
-        :root {
-            --primary: #e74c3c;
-            --secondary: #f39c12;
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-            --accent: #9b59b6;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        
-        body {
-            background: linear-gradient(135deg, #ff6b6b, #feca57);
-            color: #333;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
+      }
+
+      .start-content {
+        text-align: center;
+      }
+
+      .emoji-large {
+        font-size: 5rem;
+        margin: 20px 0;
+      }
+
+      .btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        margin: 10px;
+        transition: all 0.3s ease;
+        font-weight: bold;
+      }
+
+      .btn:hover {
+        background: var(--secondary);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .question-container {
+        margin-bottom: 30px;
+      }
+
+      .question-number {
+        font-size: 1rem;
+        color: var(--dark);
+        margin-bottom: 10px;
+      }
+
+      .question-text {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+
+      .options-container {
+        display: grid;
+        gap: 15px;
+      }
+
+      .option {
+        background: var(--light);
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+
+      .option:hover {
+        background: #dfe6e9;
+        transform: translateX(5px);
+      }
+
+      .option.selected {
+        background: var(--accent);
+        color: white;
+        border-color: var(--dark);
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+      }
+
+      .results-content {
+        text-align: center;
+      }
+
+      .score-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(var(--primary) 0%, var(--secondary) 0%);
+        margin: 0 auto 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .score-value {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--dark);
+      }
+
+      .result-title {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        color: var(--primary);
+      }
+
+      .result-description {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+      }
+
+      .chart-container {
+        margin: 30px 0;
+        height: 300px;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .share-btn {
+        background: #1da1f2;
+      }
+
+      .download-btn {
+        background: #27ae60;
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px;
+        background: var(--dark);
+        color: white;
+        margin-top: 30px;
+      }
+
+      @media (max-width: 600px) {
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+          border-radius: 10px;
         }
-        
-        header {
-            background: var(--dark);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-        
+
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--secondary);
+          font-size: 1.8rem;
         }
-        
-        .tagline {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        .progress-container {
-            height: 10px;
-            background: #ddd;
-            width: 100%;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        .screen {
-            display: none;
-            padding: 30px;
-        }
-        
-        .active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .start-content {
-            text-align: center;
-        }
-        
-        .emoji-large {
-            font-size: 5rem;
-            margin: 20px 0;
-        }
-        
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            margin: 10px;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-        
-        .btn:hover {
-            background: var(--secondary);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .question-container {
-            margin-bottom: 30px;
-        }
-        
-        .question-number {
-            font-size: 1rem;
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
-        
+
         .question-text {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            line-height: 1.5;
+          font-size: 1.2rem;
         }
-        
-        .options-container {
-            display: grid;
-            gap: 15px;
-        }
-        
-        .option {
-            background: var(--light);
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .option:hover {
-            background: #dfe6e9;
-            transform: translateX(5px);
-        }
-        
-        .option.selected {
-            background: var(--accent);
-            color: white;
-            border-color: var(--dark);
-        }
-        
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-        
-        .results-content {
-            text-align: center;
-        }
-        
+
         .score-circle {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: conic-gradient(var(--primary) 0%, var(--secondary) 0%);
-            margin: 0 auto 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          width: 150px;
+          height: 150px;
         }
-        
+
         .score-value {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--dark);
+          font-size: 2rem;
         }
-        
-        .result-title {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-        
-        .result-description {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-        
-        .chart-container {
-            margin: 30px 0;
-            height: 300px;
-        }
-        
+
         .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+          flex-direction: column;
         }
-        
-        .share-btn {
-            background: #1da1f2;
-        }
-        
-        .download-btn {
-            background: #27ae60;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: var(--dark);
-            color: white;
-            margin-top: 30px;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                border-radius: 10px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .question-text {
-                font-size: 1.2rem;
-            }
-            
-            .score-circle {
-                width: 150px;
-                height: 150px;
-            }
-            
-            .score-value {
-                font-size: 2rem;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>চদু ক্যালকুলেটর 🎭</h1>
-            <p class="tagline">আপনার চদু লেভেল জানুন - জেনজি স্টাইলে!</p>
-        </header>
-        
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+      <header>
+        <h1>চদু ক্যালকুলেটর 🎭</h1>
+        <p class="tagline">আপনার চদু লেভেল জানুন - Gen-Z স্টাইলে!</p>
+      </header>
+
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- Start Screen -->
+      <div class="screen active" id="startScreen">
+        <div class="start-content">
+          <div class="emoji-large">🤡💩🔥</div>
+          <h2>আপনি কতটা চদু?</h2>
+          <p>২০টি মজার প্রশ্নের মাধ্যমে জেনে নিন আপনার চদু লেভেল!</p>
+          <p><small>জেনজি স্ল্যাং এবং মিমস-এ ভরপুর</small></p>
+          <button class="btn" id="startBtn">শুরু করুন 🚀</button>
         </div>
-        
-        <!-- Start Screen -->
-        <div class="screen active" id="startScreen">
-            <div class="start-content">
-                <div class="emoji-large">🤡💩🔥</div>
-                <h2>আপনি কতটা চদু?</h2>
-                <p>২০টি মজার প্রশ্নের মাধ্যমে জেনে নিন আপনার চদু লেভেল!</p>
-                <p><small>জেনজি স্ল্যাং, মিমস এবং সত্যিকারের বাংলাদেশি ফ্লেভারে ভরপুর</small></p>
-                <button class="btn" id="startBtn">শুরু করুন 🚀</button>
-            </div>
+      </div>
+
+      <!-- Quiz Screen -->
+      <div class="screen" id="quizScreen">
+        <div class="question-container">
+          <div class="question-number" id="questionNumber">প্রশ্ন ১/২০</div>
+          <h2 class="question-text" id="questionText">প্রশ্ন লোড হচ্ছে...</h2>
         </div>
-        
-        <!-- Quiz Screen -->
-        <div class="screen" id="quizScreen">
-            <div class="question-container">
-                <div class="question-number" id="questionNumber">প্রশ্ন ১/২০</div>
-                <h2 class="question-text" id="questionText">প্রশ্ন লোড হচ্ছে...</h2>
-            </div>
-            
-            <div class="options-container" id="optionsContainer">
-                <!-- Options will be loaded here -->
-            </div>
-            
-            <div class="navigation">
-                <button class="btn" id="prevBtn">পিছনে ⬅️</button>
-                <button class="btn" id="nextBtn">পরবর্তী ➡️</button>
-            </div>
+
+        <div class="options-container" id="optionsContainer">
+          <!-- Options will be loaded here -->
         </div>
-        
-        <!-- Results Screen -->
-        <div class="screen" id="resultsScreen">
-            <div class="results-content">
-                <div class="score-circle">
-                    <div class="score-value" id="scoreValue">0%</div>
-                </div>
-                
-                <h2 class="result-title" id="resultTitle">রেজাল্ট টাইটেল</h2>
-                <p class="result-description" id="resultDescription">রেজাল্ট ডেস্ক্রিপশন লোড হচ্ছে...</p>
-                
-                <div class="chart-container">
-                    <canvas id="scoreChart"></canvas>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn share-btn" id="shareBtn">ফেসবুকে শেয়ার করুন 📱</button>
-                    <button class="btn download-btn" id="downloadBtn">রেজাল্ট ডাউনলোড করুন 💾</button>
-                    <button class="btn" id="retakeBtn">আবার টেস্ট দিন 🔄</button>
-                </div>
-            </div>
+
+        <div class="navigation">
+          <button class="btn" id="prevBtn">পিছনে ⬅️</button>
+          <button class="btn" id="nextBtn">পরবর্তী ➡️</button>
         </div>
-        
-        <footer>
-            <p>© ২০২৩ চদু ক্যালকুলেটর | জেনজি জেনারেশনের জন্য তৈরি</p>
-            <p><small>এই টেস্ট শুধুমাত্র বিনোদনের জন্য, সিরিয়াসলি নিবেন না প্লিজ! 😅</small></p>
-        </footer>
+      </div>
+
+      <!-- Results Screen -->
+      <div class="screen" id="resultsScreen">
+        <div class="results-content">
+          <div class="score-circle">
+            <div class="score-value" id="scoreValue">0%</div>
+          </div>
+
+          <h2 class="result-title" id="resultTitle">রেজাল্ট টাইটেল</h2>
+          <p class="result-description" id="resultDescription">
+            রেজাল্ট ডেস্ক্রিপশন লোড হচ্ছে...
+          </p>
+
+          <div class="chart-container">
+            <canvas id="scoreChart"></canvas>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn share-btn" id="shareBtn">
+              ফেসবুকে শেয়ার করুন 📱
+            </button>
+            <button class="btn download-btn" id="downloadBtn">
+              রেজাল্ট ডাউনলোড করুন 💾
+            </button>
+            <button class="btn" id="retakeBtn">আবার টেস্ট দিন 🔄</button>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>© ২০২৫ চদু ক্যালকুলেটর | Gen-Z দের জন্য তৈরি</p>
+        <p>
+          <small
+            >এই টেস্ট শুধুমাত্র বিনোদনের জন্য, সিরিয়াসলি নিবেন না প্লিজ!
+            😅</small
+          >
+        </p>
+      </footer>
     </div>
 
     <!-- Include Chart.js for the graph -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <script>
-        // Quiz Questions with Emojis
-        const questions = [
+      // Quiz Questions with Emojis
+      const questions = [
+        {
+          text: "১. আপনি কি মানুষের হোগায় আঙুল দিতে পছন্দ করেন? 🤔👆",
+          options: [
+            { text: "ক) সবসময়ই দেই 😈", value: 4 },
+            { text: "খ) আঙুল না দিলে পেটের ভাত হজম হয় না 🍚", value: 3 },
+            { text: "গ) আঙুল না দিলে রাতে ঘুম হয় না 😴", value: 5 },
+            { text: "ঘ) মাঝেমধ্যে দেই 🤷", value: 2 },
+          ],
+        },
+        {
+          text: "২. অন্যের ভালো কি আপনার সহ্য হয়?? 😒",
+          options: [
+            { text: "ক) মোটেই না 🔥", value: 5 },
+            { text: "খ) মাঝেমধ্যে সহ্য হয় 😐", value: 3 },
+            { text: "গ) হৃদয়ের গহীনে দহন বিক্রিয়া চলে 💔", value: 4 },
             {
-                text: "১. আপনি কি মানুষের হোগায় আঙুল দিতে পছন্দ করেন? 🤔👆",
-                options: [
-                    { text: "ক) সবসময়ই দেই 😈", value: 4 },
-                    { text: "খ) আঙুল না দিলে পেটের ভাত হজম হয় না 🍚", value: 3 },
-                    { text: "গ) আঙুল না দিলে রাতে ঘুম হয় না 😴", value: 5 },
-                    { text: "ঘ) মাঝেমধ্যে দেই 🤷", value: 2 }
-                ]
+              text: "ঘ) সহ্য করার ভান করি, আসলে ভেতরে ভেতরে জ্বলে 😡",
+              value: 4,
+            },
+          ],
+        },
+        {
+          text: "৩. অন্যের গফ আছে- এটা আপনি জানেন, কিন্তু যথেষ্ট প্রমাণ ও সাক্ষীর অভাবে বলতে পারছেন না। 🤫",
+          options: [
+            { text: "ক) হ্যাঁ ✅", value: 3 },
+            {
+              text: "খ) আমাকে কেউ পাত্তা দেয় না তো, তাই জ্বলে আরকি! 😤",
+              value: 4,
             },
             {
-                text: "২. অন্যের ভালো কি আপনার সহ্য হয়?? 😒",
-                options: [
-                    { text: "ক) মোটেই না 🔥", value: 5 },
-                    { text: "খ) মাঝেমধ্যে সহ্য হয় 😐", value: 3 },
-                    { text: "গ) হৃদয়ের গহীনে দহন বিক্রিয়া চলে 💔", value: 4 },
-                    { text: "ঘ) সহ্য করার ভান করি, আসলে ভেতরে ভেতরে জ্বলে 😡", value: 4 }
-                ]
+              text: "গ) আসলে গফ কিনা জানি না- আমি আন্দাজে ব্রডকাস্ট করি 📢",
+              value: 5,
             },
+            { text: "ঘ) চালিয়ে দেন ভাই 🚀", value: 2 },
+          ],
+        },
+        {
+          text: "৪. মানুষের সামনে আপনি নিজেকে কেমন ভাবে উপস্থাপন করেন? 🎭",
+          options: [
+            { text: "ক) ভেজা বেড়াল 😿", value: 1 },
+            { text: "খ) সাধু সেজে পড়ি মানষের সামনে 🙏", value: 4 },
+            { text: "গ) সবসময়ই সেইম থাকি 😎", value: 2 },
+            { text: "ঘ) ভেজা কাউয়া 🐦", value: 3 },
+          ],
+        },
+        {
+          text: "৫. আপনার জীবনের লক্ষ্য কী? 🎯",
+          options: [
+            { text: "ক) মানুষের পশ্চাৎদেশে অঙ্গুলি মর্দন 👆🍑", value: 5 },
+            { text: "খ) ভণ্ডামি করা 🤥", value: 4 },
+            { text: "গ) Become a great chapri! 🤪", value: 3 },
+            { text: "ঘ) বাবা মা-র মূখ উজ্জ্বল করা ✨", value: 1 },
+          ],
+        },
+        {
+          text: "৬. আপনি ঘুমান কখন? 😴",
+          options: [
+            { text: "ক) সকাল ৬ -১২ 🌅", value: 2 },
+            { text: "খ) দুপুর ১২-৬ ☀️", value: 3 },
+            { text: "গ) সকাল ৬ - সন্ধ্যা 6 🌞", value: 4 },
+            { text: "ঘ) রাত ১২ - সকাল ৬ 🌙", value: 1 },
+          ],
+        },
+        {
+          text: "৭. সোস্যাল মিডিয়ায় আপনি কেমন?📱 Like a - ",
+          options: [
+            { text: "ক) টিকটকার 🕺", value: 3 },
+            { text: "খ) ছাপড়ি সুশিল 🧢", value: 4 },
+            { text: "গ) ব্রেইনলেস সোস্যাল মিডিয়া ইউজার 🧠❌", value: 5 },
             {
-                text: "৩. অন্যের গফ আছে- এটা আপনি জানেন, কিন্তু যথেষ্ট প্রমাণ ও সাক্ষীর ব্যাপারে বলতে পারছেন না। 🤫",
-                options: [
-                    { text: "ক) হ্যাঁ ✅", value: 3 },
-                    { text: "খ) আমাকে কেউ পাত্তা দেয় না তো, তাই জ্বলে আরকি! 😤", value: 4 },
-                    { text: "গ) আসলে গফ কি না জানি না- আমি আন্দাজে ব্রডকাস্ট করি 📢", value: 5 },
-                    { text: "ঘ) চালিয়ে দেন ভাই 🚀", value: 2 }
-                ]
+              text: "ঘ) নীরব দর্শক- চক্ষু দিয়া দুনিয়ার রঙ্গ-তামাশা দেখি 👀",
+              value: 2,
             },
+          ],
+        },
+        {
+          text: "৮. আপনার শিক্ষাগত যোগ্যতা- 🎓",
+          options: [
+            { text: "ক) অশিক্ষিত ❌", value: 5 },
+            { text: "খ) ভার্সিটি 🏫", value: 1 },
+            { text: "গ) এইচএসসি 📚", value: 2 },
+            { text: "ঘ) এসএসসি 📖", value: 3 },
+          ],
+        },
+        {
+          text: "৯. আপনি হাঁসেন কেমনে? 😂",
+          options: [
+            { text: "ক) ফাটা বাঁশের মত 🎋", value: 4 },
+            { text: "খ) বোকা**** মত 🤪", value: 5 },
+            { text: "গ) ভদ্র মানুষের মত 😊", value: 1 },
+            { text: "ঘ) Simpering (মুচকি হাঁসি) 🙊", value: 2 },
+          ],
+        },
+        {
+          text: "১০. আপনি এক্সামের আগে পড়াশোনা করেন কতক্ষণ? 📝",
+          options: [
+            { text: "ক) না পড়েই এক্সাম দেই 🎲", value: 5 },
+            { text: "খ) সবাইকে দেখাই পড়ি, আসলে পড়ি না 🎭", value: 4 },
+            { text: "গ) পড়ি কিন্তু সবাইকে বলি পড়ি না 🤫", value: 3 },
+            { text: "ঘ) পাশ-ফেইল ও রিজিকের ওপর নির্ভরশীল 🙏", value: 4 },
+          ],
+        },
+        {
+          text: "১১. আপনি গ্রুপে অ্যাক্টিভ থাকেন কেন? 💬",
+          options: [
+            { text: "ক) গসিপ শুনতে 👂", value: 4 },
+            { text: "খ) শুধু মিম দেখতে 😂", value: 3 },
             {
-                text: "৪. মানুষের সামনে আপনি নিজেকে কেমন ভাবে উপস্থাপন করেন? 🎭",
-                options: [
-                    { text: "ক) ভেজা বেড়াল 😿", value: 1 },
-                    { text: "খ) সাধু সেজে পড়ি মানষের সামনে 🙏", value: 4 },
-                    { text: "গ) সবসময়ই সেইম থাকি 😎", value: 2 },
-                    { text: "ঘ) ভেজা কাউয়া 🐦", value: 3 }
-                ]
+              text: "গ) গ্রুপে অ্যাক্টিভ না থাকলে আমার অস্তিত্ব নেই 👁️",
+              value: 5,
             },
+            { text: "ঘ) মানুষের রঙ্গ-তামাশা দেখতে 🍿", value: 4 },
+          ],
+        },
+        {
+          text: "১২. কেউ আপনার সাথে ভালো বিহেভ করলে আপনার প্রতিক্রিয়া কী? 🤔",
+          options: [
+            { text: "ক) ভালো ব্যবহার সহ্য হয় না 😠", value: 5 },
+            { text: "খ) মনে হয় কিছু চাইবে 🤨", value: 4 },
+            { text: "গ) ধন্যবাদ না দিয়ে সন্দেহ করি 🧐", value: 4 },
+            { text: "ঘ) এমন মানুষ এখনো আছে বিশ্বাসই হয় না 😲", value: 3 },
+          ],
+        },
+        {
+          text: "১৩. আপনি নিজের ভূল ধরা পড়লে কী করেন? 🙈",
+          options: [
+            { text: "ক) অন্যের ঘাড়ে দোষ চাপাই 👉", value: 5 },
+            { text: "খ) 'তুই বুঝস না ভাই' বলে চেপে যাই 🤷", value: 4 },
+            { text: "গ) মনে মনে মানি, মুখে না 🤐", value: 3 },
+            { text: "ঘ) আসলেই স্বীকার করি ✅", value: 1 },
+          ],
+        },
+        {
+          text: "১৪. আপনি নিজের প্রোফাইল পিক কখন দেন? 📸",
+          options: [
+            { text: "ক) যখন আত্মবিশ্বাস বেড়ে যায় 💪", value: 3 },
+            { text: "খ) প্রেমে ধাক্কা খাওয়ার পর 💔", value: 4 },
             {
-                text: "৫. আপনার জীবনের লক্ষ্য কী? 🎯",
-                options: [
-                    { text: "ক) মানুষের পশ্চাৎদেশে অঙ্গুলি মর্দন 👆🍑", value: 5 },
-                    { text: "খ) ভণ্ডামি করা 🤥", value: 4 },
-                    { text: "গ) Become a great chapri! 🤪", value: 3 },
-                    { text: "ঘ) বাবা মা-র মূখ উজ্জ্বল করা ✨", value: 1 }
-                ]
+              text: "গ) হুট করেই- কারণ আমার লাইফে প্ল্যান কিছুই নাই 🎲",
+              value: 5,
             },
-            {
-                text: "৬. আপনি ঘুমান কখন? 😴",
-                options: [
-                    { text: "ক) সকাল ৬ -১২ 🌅", value: 2 },
-                    { text: "খ) দুপুর ১২-৬ ☀️", value: 3 },
-                    { text: "গ) সকাল ৬ - সন্ধ্যা 6 🌞", value: 4 },
-                    { text: "ঘ) রাত ১২ - সকাল ৬ 🌙", value: 1 }
-                ]
-            },
-            {
-                text: "৭. সোস্যাল মিডিয়ার আপনি কেমন? Like a - 📱",
-                options: [
-                    { text: "ক) টিকটকার 🕺", value: 3 },
-                    { text: "খ) ছাপড়ি সুশিল 🧢", value: 4 },
-                    { text: "গ) ব্রেইনলেস সোস্যাল মিডিয়া ইউজER 🧠❌", value: 5 },
-                    { text: "ঘ) নীরব দর্শক- চক্ষু দিয়া দুনিয়ার রঙ্গ-তামাশা দেখি 👀", value: 2 }
-                ]
-            },
-            {
-                text: "৮. আপনার শিক্ষাগত যোগ্যতা- 🎓",
-                options: [
-                    { text: "ক) অশিক্ষিত ❌", value: 5 },
-                    { text: "খ) ভার্সিটি 🏫", value: 1 },
-                    { text: "গ) এইচএসসি 📚", value: 2 },
-                    { text: "ঘ) এসএসসি 📖", value: 3 }
-                ]
-            },
-            {
-                text: "৯. আপনি হাঁসেন কেমনে? 😂",
-                options: [
-                    { text: "ক) ফাটা বাঁশের মত 🎋", value: 4 },
-                    { text: "খ) বোকা**** মত 🤪", value: 5 },
-                    { text: "গ) ভদ্র মানুষের মত 😊", value: 1 },
-                    { text: "ঘ) Simpering (মুচকি হাঁসি) 🙊", value: 2 }
-                ]
-            },
-            {
-                text: "১০. আপনি এক্সামের আগে পড়াশোনা করেন কতক্ষণ? 📝",
-                options: [
-                    { text: "ক) না পড়েই এক্সাম দেই 🎲", value: 5 },
-                    { text: "খ) সবাইকে দেখাই পড়ি, আসলে পড়ি না 🎭", value: 4 },
-                    { text: "গ) পড়ি কিন্তু সবাইকে বলি পড়ি না 🤫", value: 3 },
-                    { text: "ঘ) পাশ-ফেইল ও রিজিকের ওপর নির্ভরশীল 🙏", value: 4 }
-                ]
-            },
-            {
-                text: "১১. আপনি গ্রুপে অ্যাক্টিভ থাকেন কেন? 💬",
-                options: [
-                    { text: "ক) গসিপ শুনতে 👂", value: 4 },
-                    { text: "খ) শুধু মিম দেখতে 😂", value: 3 },
-                    { text: "গ) গ্রুপে অ্যাক্টিভ না থাকলে আমার অস্তিত্ব নেই 👁️", value: 5 },
-                    { text: "ঘ) মানুষের রঙ্গ-তামাশা দেখতে 🍿", value: 4 }
-                ]
-            },
-            {
-                text: "১২. কেউ আপনার সাথে ভালো বিহেভ করলে আপনার প্রতিক্রিয়া কী? 🤔",
-                options: [
-                    { text: "ক) ভালো ব্যবহার সহ্য হয় না 😠", value: 5 },
-                    { text: "খ) মনে হয় কিছু চাইবে 🤨", value: 4 },
-                    { text: "গ) ধন্যবাদ না দিয়ে সন্দেহ করি 🧐", value: 4 },
-                    { text: "ঘ) এমন মানুষ এখনো আছে বিশ্বাসই হয় না 😲", value: 3 }
-                ]
-            },
-            {
-                text: "১৩. আপনি নিজেত ভূল ধরা পড়লে কী করেন? 🙈",
-                options: [
-                    { text: "ক) অন্যের ঘাড়ে দোষ চাপাই 👉", value: 5 },
-                    { text: "খ) 'তুই বুঝস না ভাই' বলে চেপে যাই 🤷", value: 4 },
-                    { text: "গ) মনে মনে মানি, মুখে না 🤐", value: 3 },
-                    { text: "ঘ) আসলেই স্বীকার করি ✅", value: 1 }
-                ]
-            },
-            {
-                text: "১৪. আপনি নিজের প্রোফাইল পিক কখন দেন? 📸",
-                options: [
-                    { text: "ক) যখন আত্মবিশ্বাস বেড়ে যায় 💪", value: 3 },
-                    { text: "খ) প্রেমে ধাক্কা খাওয়ার পর 💔", value: 4 },
-                    { text: "গ) হুট করেই- কারণ আমার লাইফে প্ল্যান কিছুই নাই 🎲", value: 5 },
-                    { text: "ঘ) No image available ❌", value: 2 }
-                ]
-            },
-            {
-                text: "১৫. কারো সাথে তর্কে হারলে? 🗣️",
-                options: [
-                    { text: "ক) বলি 'এইটা নিয়ে তর্ক করার কিছু নাই ভাই' 🚫", value: 4 },
-                    { text: "খ) অফলাইনে গিয়ে মাথায় যুক্তি আসে 💡", value: 3 },
-                    { text: "গ) গ্রুপে মিম দিয়া উলটা খাই 😂", value: 5 },
-                    { text: "ঘ) প্রমাণ না পেয়ে বলি 'গুগলও ভুল করে' 🌐", value: 4 }
-                ]
-            },
-            {
-                text: "১৬. আপনি পরামর্শ দেন কখন? 💭",
-                options: [
-                    { text: "ক) যখন নিজের জীবন তলানিতে থাকে 📉", value: 5 },
-                    { text: "খ) অন্যের কষ্টে নিজেকে এক্সপার্ট মনে হয় 🧠", value: 4 },
-                    { text: "গ) ফ্রি থাকি বলে 🕒", value: 3 },
-                    { text: "ঘ) নিজেরে বড় দেখানোর জন্য 👑", value: 4 }
-                ]
-            },
-            {
-                text: "১৭. কেউ আপনার সাফল্যে খুশি হলে আপনি কী ভাবেন? 🤨",
-                options: [
-                    { text: "ক) নাটক করছে 🎭", value: 5 },
-                    { text: "খ) হিংসায় পুড়তেছে 🔥", value: 4 },
-                    { text: "গ) ওর হয়তো নিজের কিছুই নেই ❌", value: 4 },
-                    { text: "ঘ) একদম বাস্তবেই খুশি (এমন মানুষ বিরল) ✨", value: 1 }
-                ]
-            },
-            {
-                text: "১৮. জীবনে সবচেয়ে বেশি আফসোস কিসের? 😔",
-                options: [
-                    { text: "ক) ভুল মানুষরে ভরসা করা 👥", value: 3 },
-                    { text: "খ) সময়মতো না ঘুমানো 😴", value: 4 },
-                    { text: "গ) না পড়েই এক্সাম দেওয়া 📚", value: 5 },
-                    { text: "ঘ) একটাও ভালো মিম বানাতে না পারা 😂", value: 4 }
-                ]
-            },
-            {
-                text: "১৯. আপনার সবচেয়ে বড় গুণ কী? 💫",
-                options: [
-                    { text: "ক) মানুষের পেছনে কথা বলা 🗣️", value: 5 },
-                    { text: "খ) অন্যের সাফল্য হজম না করা 🔥", value: 4 },
-                    { text: "গ) সবসময় সত্য কথা বলা ✅", value: 1 },
-                    { text: "ঘ) নিজের ভুল কখনো স্বীকার না করা ❌", value: 5 }
-                ]
-            },
-            {
-                text: "২০. আপনার জীবনের মোটো কী? 🎯",
-                options: [
-                    { text: "ক) 'জীবনটা একটাই, চদু হও!' 🤪", value: 5 },
-                    { text: "খ) 'আমি যা করি, তাই সঠিক' ✅", value: 4 },
-                    { text: "গ) 'ভালো মানুষ হওয়ার চেষ্টা করি' 😇", value: 1 },
-                    { text: "ঘ) 'জীবন সংক্ষিপ্ত, মিম তৈরি করো' 😂", value: 3 }
-                ]
-            }
+            { text: "ঘ) No image available ❌", value: 2 },
+          ],
+        },
+        {
+          text: "১৫. কারো সাথে তর্কে হারলে? 🗣️",
+          options: [
+            { text: "ক) বলি 'এইটা নিয়ে তর্ক করার কিছু নাই ভাই' 🚫", value: 4 },
+            { text: "খ) অফলাইনে গিয়ে মাথায় যুক্তি আসে 💡", value: 3 },
+            { text: "গ) গ্রুপে মিম দিয়া উলটা খাই 😂", value: 5 },
+            { text: "ঘ) প্রমাণ না পেয়ে বলি 'গুগলও ভুল করে' 🌐", value: 4 },
+          ],
+        },
+        {
+          text: "১৬. আপনি পরামর্শ দেন কখন? 💭",
+          options: [
+            { text: "ক) যখন নিজের জীবন তলানিতে থাকে 📉", value: 5 },
+            { text: "খ) অন্যের কষ্টে নিজেকে এক্সপার্ট মনে হয় 🧠", value: 4 },
+            { text: "গ) ফ্রি থাকি বলে 🕒", value: 3 },
+            { text: "ঘ) নিজেরে বড় দেখানোর জন্য 👑", value: 4 },
+          ],
+        },
+        {
+          text: "১৭. কেউ আপনার সাফল্যে খুশি হলে আপনি কী ভাবেন? 🤨",
+          options: [
+            { text: "ক) নাটক করছে 🎭", value: 5 },
+            { text: "খ) হিংসায় পুড়তেছে 🔥", value: 4 },
+            { text: "গ) ওর হয়তো নিজের কিছুই নেই ❌", value: 4 },
+            { text: "ঘ) একদম বাস্তবেই খুশি (এমন মানুষ বিরল) ✨", value: 1 },
+          ],
+        },
+        {
+          text: "১৮. জীবনে সবচেয়ে বেশি আফসোস কিসের? 😔",
+          options: [
+            { text: "ক) ভুল মানুষরে ভরসা করা 👥", value: 3 },
+            { text: "খ) সময়মতো না ঘুমানো 😴", value: 4 },
+            { text: "গ) না পড়েই এক্সাম দেওয়া 📚", value: 5 },
+            { text: "ঘ) একটাও ভালো মিম বানাতে না পারা 😂", value: 4 },
+          ],
+        },
+        {
+          text: "১৯. আপনার সবচেয়ে বড় গুণ কী? 💫",
+          options: [
+            { text: "ক) মানুষের পেছনে কথা বলা 🗣️", value: 5 },
+            { text: "খ) অন্যের সাফল্য হজম না করা 🔥", value: 4 },
+            { text: "গ) সবসময় সত্য কথা বলা ✅", value: 1 },
+            { text: "ঘ) নিজের ভুল কখনো স্বীকার না করা ❌", value: 5 },
+          ],
+        },
+        {
+          text: "২০. আপনার জীবনের মোটো কী? 🎯",
+          options: [
+            { text: "ক) 'জীবন তো একটাই, চদু হও!' 🤪", value: 5 },
+            { text: "খ) 'আমি যা করি, তাই সঠিক' ✅", value: 4 },
+            { text: "গ) 'ভালো মানুষ হওয়ার চেষ্টা করি' 😇", value: 1 },
+            { text: "ঘ) 'জীবন সংক্ষিপ্ত, মিম তৈরি করো' 😂", value: 3 },
+          ],
+        },
+      ];
+
+      // App State
+      const state = {
+        currentScreen: "start",
+        currentQuestion: 0,
+        answers: [],
+        score: 0,
+      };
+
+      // DOM Elements
+      const elements = {
+        startScreen: document.getElementById("startScreen"),
+        quizScreen: document.getElementById("quizScreen"),
+        resultsScreen: document.getElementById("resultsScreen"),
+        progressBar: document.getElementById("progressBar"),
+        questionNumber: document.getElementById("questionNumber"),
+        questionText: document.getElementById("questionText"),
+        optionsContainer: document.getElementById("optionsContainer"),
+        prevBtn: document.getElementById("prevBtn"),
+        nextBtn: document.getElementById("nextBtn"),
+        scoreValue: document.getElementById("scoreValue"),
+        resultTitle: document.getElementById("resultTitle"),
+        resultDescription: document.getElementById("resultDescription"),
+        startBtn: document.getElementById("startBtn"),
+        shareBtn: document.getElementById("shareBtn"),
+        downloadBtn: document.getElementById("downloadBtn"),
+        retakeBtn: document.getElementById("retakeBtn"),
+      };
+
+      // Initialize the app
+      function init() {
+        attachEventListeners();
+      }
+
+      // Event Listeners
+      function attachEventListeners() {
+        elements.startBtn.addEventListener("click", startQuiz);
+        elements.prevBtn.addEventListener("click", previousQuestion);
+        elements.nextBtn.addEventListener("click", nextQuestion);
+        elements.shareBtn.addEventListener("click", shareResults);
+        elements.downloadBtn.addEventListener("click", downloadResults);
+        elements.retakeBtn.addEventListener("click", retakeQuiz);
+      }
+
+      // Screen Management
+      function showScreen(screenName) {
+        // Hide all screens
+        document.querySelectorAll(".screen").forEach((screen) => {
+          screen.classList.remove("active");
+        });
+
+        // Show target screen
+        const targetScreen = document.getElementById(screenName + "Screen");
+        if (targetScreen) {
+          targetScreen.classList.add("active");
+          state.currentScreen = screenName;
+        }
+      }
+
+      // Quiz Functions
+      function startQuiz() {
+        state.currentQuestion = 0;
+        state.answers = [];
+        state.score = 0;
+
+        showScreen("quiz");
+        updateProgress();
+        displayQuestion();
+      }
+
+      function displayQuestion() {
+        const question = questions[state.currentQuestion];
+
+        // Update question info
+        elements.questionNumber.textContent = `প্রশ্ন ${
+          state.currentQuestion + 1
+        }/${questions.length}`;
+        elements.questionText.textContent = question.text;
+
+        // Update options
+        elements.optionsContainer.innerHTML = "";
+        question.options.forEach((option, index) => {
+          const optionElement = document.createElement("div");
+          optionElement.className = "option";
+          optionElement.textContent = option.text;
+          optionElement.addEventListener("click", () => selectOption(index));
+
+          // Check if this option was previously selected
+          if (state.answers[state.currentQuestion] === index) {
+            optionElement.classList.add("selected");
+          }
+
+          elements.optionsContainer.appendChild(optionElement);
+        });
+
+        // Update navigation buttons
+        elements.prevBtn.disabled = state.currentQuestion === 0;
+        elements.nextBtn.textContent =
+          state.currentQuestion === questions.length - 1
+            ? "রেজাল্ট দেখুন 🎉"
+            : "পরবর্তী ➡️";
+      }
+
+      function selectOption(optionIndex) {
+        // Remove selected class from all options
+        document.querySelectorAll(".option").forEach((option) => {
+          option.classList.remove("selected");
+        });
+
+        // Add selected class to clicked option
+        document
+          .querySelectorAll(".option")
+          [optionIndex].classList.add("selected");
+
+        // Store answer
+        state.answers[state.currentQuestion] = optionIndex;
+      }
+
+      function previousQuestion() {
+        if (state.currentQuestion > 0) {
+          state.currentQuestion--;
+          updateProgress();
+          displayQuestion();
+        }
+      }
+
+      function nextQuestion() {
+        if (state.answers[state.currentQuestion] === undefined) {
+          alert("দয়া করে একটি অপশন সিলেক্ট করুন!");
+          return;
+        }
+
+        if (state.currentQuestion < questions.length - 1) {
+          state.currentQuestion++;
+          updateProgress();
+          displayQuestion();
+        } else {
+          calculateResults();
+          showResultsScreen();
+        }
+      }
+
+      function updateProgress() {
+        const progress = ((state.currentQuestion + 1) / questions.length) * 100;
+        elements.progressBar.style.width = `${progress}%`;
+      }
+
+      // Results Calculation
+      function calculateResults() {
+        let totalScore = 0;
+
+        questions.forEach((question, index) => {
+          const answerIndex = state.answers[index];
+          if (answerIndex !== undefined) {
+            totalScore += question.options[answerIndex].value;
+          }
+        });
+
+        // Calculate final score (0-100)
+        const maxPossibleScore = questions.length * 5;
+        state.score = Math.round((totalScore / maxPossibleScore) * 100);
+      }
+
+      function showResultsScreen() {
+        showScreen("results");
+        displayResults();
+      }
+
+      function displayResults() {
+        // Update score
+        elements.scoreValue.textContent = `${state.score}%`;
+
+        // Update score circle
+        const scoreCircle = document.querySelector(".score-circle");
+        scoreCircle.style.background = `conic-gradient(var(--primary) ${state.score}%, var(--secondary) ${state.score}%)`;
+
+        // Update result message based on score
+        let title, description;
+
+        if (state.score >= 90) {
+          title = "চদুর রাজা! 👑";
+          description =
+            "আপনি তো চদুদের চদু! আপনার চদুপনার লেভেল এত বেশি যে, চদুরাও আপনার কাছে চুদু হয়ে যাবে! আপনি মানুষের হোগায় আঙুল দেওয়া থেকে শুরু করে সব ধরনের চদুপনায় পারদর্শী।";
+        } else if (state.score >= 70) {
+          title = "প্রোফেশনাল চদু! 💼";
+          description =
+            "আপনি একজন পাকা চদু! মানুষের পেছনে কথা বলা, গসিপ ছড়ানো, অন্যের সাফল্য হজম না করা - এসব আপনার নিত্য দিনের কাজ। আপনি চদুপনাকে একটা আর্ট ফর্মে পরিণত করেছেন!";
+        } else if (state.score >= 50) {
+          title = "অ্যাভারেজ চদু! 😎";
+          description =
+            "আপনি মাঝারি মানের চদু। মাঝেমধ্যে চদুপনি করেন, আবার কখনো কখনো ভালো মানুষও হয়ে যান। আপনার চদুপনার মধ্যে একটা ব্যালেন্স আছে।";
+        } else if (state.score >= 30) {
+          title = "নরমাল মানুষ! 🙂";
+          description =
+            "আপনি সাধারণ মানুষের কাতারেই রয়েছেন। মাঝেমধ্যে একটু-আধটু চদুপনি করলেও সেটা তেমন একটা নজরে পড়ে না। আপনি মূলত ভালো মানুষই!";
+        } else {
+          title = "সাধু মানুষ! 😇";
+          description =
+            "ওহো! আপনি তো একদমই চদু নন! আপনি খুবই ভালো মানুষ। মানুষের সাথে ভালো ব্যবহার করেন, অন্যের সাফল্যে খুশি হন। এমন মানুষ এখন খুব কমই দেখা যায়!";
+        }
+
+        elements.resultTitle.textContent = title;
+        elements.resultDescription.textContent = description;
+
+        // Create chart
+        createScoreChart();
+      }
+
+      function createScoreChart() {
+        const ctx = document.getElementById("scoreChart").getContext("2d");
+
+        // Calculate category scores (simplified for demo)
+        const categories = [
+          "হোগায় আঙুল দেওয়া",
+          "গসিপ করা",
+          "ভণ্ডামি",
+          "অন্যের সাফল্য হজম না করা",
+          "চদুপনি",
         ];
 
-        // App State
-        const state = {
-            currentScreen: 'start',
-            currentQuestion: 0,
-            answers: [],
-            score: 0
-        };
+        const categoryScores = [
+          Math.min(state.score + 10, 100),
+          Math.min(state.score + 5, 100),
+          state.score,
+          Math.min(state.score + 15, 100),
+          Math.min(state.score + 20, 100),
+        ];
 
-        // DOM Elements
-        const elements = {
-            startScreen: document.getElementById('startScreen'),
-            quizScreen: document.getElementById('quizScreen'),
-            resultsScreen: document.getElementById('resultsScreen'),
-            progressBar: document.getElementById('progressBar'),
-            questionNumber: document.getElementById('questionNumber'),
-            questionText: document.getElementById('questionText'),
-            optionsContainer: document.getElementById('optionsContainer'),
-            prevBtn: document.getElementById('prevBtn'),
-            nextBtn: document.getElementById('nextBtn'),
-            scoreValue: document.getElementById('scoreValue'),
-            resultTitle: document.getElementById('resultTitle'),
-            resultDescription: document.getElementById('resultDescription'),
-            startBtn: document.getElementById('startBtn'),
-            shareBtn: document.getElementById('shareBtn'),
-            downloadBtn: document.getElementById('downloadBtn'),
-            retakeBtn: document.getElementById('retakeBtn')
-        };
-
-        // Initialize the app
-        function init() {
-            attachEventListeners();
-        }
-
-        // Event Listeners
-        function attachEventListeners() {
-            elements.startBtn.addEventListener('click', startQuiz);
-            elements.prevBtn.addEventListener('click', previousQuestion);
-            elements.nextBtn.addEventListener('click', nextQuestion);
-            elements.shareBtn.addEventListener('click', shareResults);
-            elements.downloadBtn.addEventListener('click', downloadResults);
-            elements.retakeBtn.addEventListener('click', retakeQuiz);
-        }
-
-        // Screen Management
-        function showScreen(screenName) {
-            // Hide all screens
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            
-            // Show target screen
-            const targetScreen = document.getElementById(screenName + 'Screen');
-            if (targetScreen) {
-                targetScreen.classList.add('active');
-                state.currentScreen = screenName;
-            }
-        }
-
-        // Quiz Functions
-        function startQuiz() {
-            state.currentQuestion = 0;
-            state.answers = [];
-            state.score = 0;
-            
-            showScreen('quiz');
-            updateProgress();
-            displayQuestion();
-        }
-
-        function displayQuestion() {
-            const question = questions[state.currentQuestion];
-            
-            // Update question info
-            elements.questionNumber.textContent = `প্রশ্ন ${state.currentQuestion + 1}/${questions.length}`;
-            elements.questionText.textContent = question.text;
-            
-            // Update options
-            elements.optionsContainer.innerHTML = '';
-            question.options.forEach((option, index) => {
-                const optionElement = document.createElement('div');
-                optionElement.className = 'option';
-                optionElement.textContent = option.text;
-                optionElement.addEventListener('click', () => selectOption(index));
-                
-                // Check if this option was previously selected
-                if (state.answers[state.currentQuestion] === index) {
-                    optionElement.classList.add('selected');
-                }
-                
-                elements.optionsContainer.appendChild(optionElement);
-            });
-            
-            // Update navigation buttons
-            elements.prevBtn.disabled = state.currentQuestion === 0;
-            elements.nextBtn.textContent = state.currentQuestion === questions.length - 1 ? 'রেজাল্ট দেখুন 🎉' : 'পরবর্তী ➡️';
-        }
-
-        function selectOption(optionIndex) {
-            // Remove selected class from all options
-            document.querySelectorAll('.option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            
-            // Add selected class to clicked option
-            document.querySelectorAll('.option')[optionIndex].classList.add('selected');
-            
-            // Store answer
-            state.answers[state.currentQuestion] = optionIndex;
-        }
-
-        function previousQuestion() {
-            if (state.currentQuestion > 0) {
-                state.currentQuestion--;
-                updateProgress();
-                displayQuestion();
-            }
-        }
-
-        function nextQuestion() {
-            if (state.answers[state.currentQuestion] === undefined) {
-                alert('দয়া করে একটি অপশন সিলেক্ট করুন!');
-                return;
-            }
-            
-            if (state.currentQuestion < questions.length - 1) {
-                state.currentQuestion++;
-                updateProgress();
-                displayQuestion();
-            } else {
-                calculateResults();
-                showResultsScreen();
-            }
-        }
-
-        function updateProgress() {
-            const progress = ((state.currentQuestion + 1) / questions.length) * 100;
-            elements.progressBar.style.width = `${progress}%`;
-        }
-
-        // Results Calculation
-        function calculateResults() {
-            let totalScore = 0;
-            
-            questions.forEach((question, index) => {
-                const answerIndex = state.answers[index];
-                if (answerIndex !== undefined) {
-                    totalScore += question.options[answerIndex].value;
-                }
-            });
-            
-            // Calculate final score (0-100)
-            const maxPossibleScore = questions.length * 5;
-            state.score = Math.round((totalScore / maxPossibleScore) * 100);
-        }
-
-        function showResultsScreen() {
-            showScreen('results');
-            displayResults();
-        }
-
-        function displayResults() {
-            // Update score
-            elements.scoreValue.textContent = `${state.score}%`;
-            
-            // Update score circle
-            const scoreCircle = document.querySelector('.score-circle');
-            scoreCircle.style.background = `conic-gradient(var(--primary) ${state.score}%, var(--secondary) ${state.score}%)`;
-            
-            // Update result message based on score
-            let title, description;
-            
-            if (state.score >= 90) {
-                title = "চদুর রাজা! 👑";
-                description = "আপনি তো চদুদের চদু! আপনার চদুপনার লেভেল এত বেশি যে, চদুরাও আপনার কাছে চদু লাগে! আপনি মানুষের হোগায় আঙুল দেওয়া থেকে শুরু করে সব ধরনের চদুপনায় পারদর্শী।";
-            } else if (state.score >= 70) {
-                title = "প্রোফেশনাল চদু! 💼";
-                description = "আপনি একজন পাকা চদু! মানুষের পেছনে কথা বলা, গসিপ ছড়ানো, অন্যের সাফল্য হজম না করা - এসব আপনার নিত্য দিনের কাজ। আপনি চদুপনাকে একটা আর্ট ফর্মে পরিণত করেছেন!";
-            } else if (state.score >= 50) {
-                title = "অ্যাভারেজ চদু! 😎";
-                description = "আপনি মাঝারি মানের চদু। মাঝেমধ্যে চদুপনি করেন, আবার কখনো কখনো ভালো মানুষও হয়ে যান। আপনার চদুপনার মধ্যে একটা ব্যালেন্স আছে।";
-            } else if (state.score >= 30) {
-                title = "নরমাল মানুষ! 🙂";
-                description = "আপনি সাধারণ মানুষের কাতারেই রয়েছেন। মাঝেমধ্যে একটু-আধটু চদুপনি করলেও সেটা তেমন একটা নজরে পড়ে না। আপনি মূলত ভালো মানুষই!";
-            } else {
-                title = "সাধু মানুষ! 😇";
-                description = "ওহো! আপনি তো একদমই চদু নন! আপনি খুবই ভালো মানুষ। মানুষের সাথে ভালো ব্যবহার করেন, অন্যের সাফল্যে খুশি হন। এমন মানুষ এখন খুব কমই দেখা যায়!";
-            }
-            
-            elements.resultTitle.textContent = title;
-            elements.resultDescription.textContent = description;
-            
-            // Create chart
-            createScoreChart();
-        }
-
-        function createScoreChart() {
-            const ctx = document.getElementById('scoreChart').getContext('2d');
-            
-            // Calculate category scores (simplified for demo)
-            const categories = [
-                'হোগায় আঙুল দেওয়া',
-                'গসিপ করা',
-                'ভণ্ডামি',
-                'অন্যের সাফল্য হজম না করা',
-                'চদুপনি'
-            ];
-            
-            const categoryScores = [
-                Math.min(state.score + 10, 100),
-                Math.min(state.score + 5, 100),
-                state.score,
-                Math.min(state.score + 15, 100),
-                Math.min(state.score + 20, 100)
-            ];
-            
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: categories,
-                    datasets: [{
-                        label: 'আপনার চদু স্কোর',
-                        data: categoryScores,
-                        backgroundColor: 'rgba(231, 76, 60, 0.2)',
-                        borderColor: 'rgba(231, 76, 60, 1)',
-                        pointBackgroundColor: 'rgba(231, 76, 60, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(231, 76, 60, 1)'
-                    }]
+        new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: categories,
+            datasets: [
+              {
+                label: "আপনার চদু স্কোর",
+                data: categoryScores,
+                backgroundColor: "rgba(231, 76, 60, 0.2)",
+                borderColor: "rgba(231, 76, 60, 1)",
+                pointBackgroundColor: "rgba(231, 76, 60, 1)",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "rgba(231, 76, 60, 1)",
+              },
+            ],
+          },
+          options: {
+            scales: {
+              r: {
+                angleLines: {
+                  display: true,
                 },
-                options: {
-                    scales: {
-                        r: {
-                            angleLines: {
-                                display: true
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 100
-                        }
-                    }
-                }
-            });
-        }
+                suggestedMin: 0,
+                suggestedMax: 100,
+              },
+            },
+          },
+        });
+      }
 
-        // Share Results
-        function shareResults() {
-            const shareText = `আমি চদু ক্যালকুলেটরে ${state.score}% চদু স্কোর পেয়েছি! 🎭 আপনার স্কোর কত? \n\nএখানে টেস্ট দিন: ${window.location.href}`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'আমার চদু স্কোর',
-                    text: shareText,
-                    url: window.location.href,
-                })
-                .catch(error => console.log('Error sharing:', error));
-            } else {
-                // Fallback for browsers that don't support Web Share API
-                navigator.clipboard.writeText(shareText)
-                    .then(() => alert('রেজাল্ট কপি করা হয়েছে! ফেসবুকে পেস্ট করুন।'))
-                    .catch(() => prompt('রেজাল্ট শেয়ার করতে এই টেক্সটটি কপি করুন:', shareText));
-            }
-        }
+      // Share Results
+      function shareResults() {
+        const shareText = `আমি চদু ক্যালকুলেটরে ${state.score}% চদু স্কোর পেয়েছি! 🎭 আপনার স্কোর কত? \n\nএখানে টেস্ট দিন: ${window.location.href}`;
 
-        // Download Results
-        function downloadResults() {
-            // Create a canvas to capture the result
-            const resultsElement = document.getElementById('resultsScreen');
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Set canvas size
-            canvas.width = resultsElement.offsetWidth;
-            canvas.height = resultsElement.offsetHeight;
-            
-            // Create a temporary div to render the results for capture
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = resultsElement.innerHTML;
-            tempDiv.style.width = `${canvas.width}px`;
-            tempDiv.style.height = `${canvas.height}px`;
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            document.body.appendChild(tempDiv);
-            
-            // Use html2canvas library would be better here, but for simplicity using a basic approach
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#2c3e50';
-            ctx.font = 'bold 30px Arial';
-            ctx.fillText('চদু ক্যালকুলেটর রেজাল্ট', 50, 50);
-            
-            ctx.fillStyle = '#e74c3c';
-            ctx.font = 'bold 60px Arial';
-            ctx.fillText(`স্কোর: ${state.score}%`, 50, 130);
-            
-            ctx.fillStyle = '#333';
-            ctx.font = '20px Arial';
-            ctx.fillText(elements.resultTitle.textContent, 50, 180);
-            
-            // Wrap text for description
-            const description = elements.resultDescription.textContent;
-            const maxWidth = canvas.width - 100;
-            const lineHeight = 25;
-            let y = 220;
-            
-            const words = description.split(' ');
-            let line = '';
-            
-            for (let i = 0; i < words.length; i++) {
-                const testLine = line + words[i] + ' ';
-                const metrics = ctx.measureText(testLine);
-                const testWidth = metrics.width;
-                
-                if (testWidth > maxWidth && i > 0) {
-                    ctx.fillText(line, 50, y);
-                    line = words[i] + ' ';
-                    y += lineHeight;
-                } else {
-                    line = testLine;
-                }
-            }
+        if (navigator.share) {
+          navigator
+            .share({
+              title: "আমার চদু স্কোর",
+              text: shareText,
+              url: window.location.href,
+            })
+            .catch((error) => console.log("Error sharing:", error));
+        } else {
+          // Fallback for browsers that don't support Web Share API
+          navigator.clipboard
+            .writeText(shareText)
+            .then(() => alert("রেজাল্ট কপি করা হয়েছে! ফেসবুকে পেস্ট করুন।"))
+            .catch(() =>
+              prompt("রেজাল্ট শেয়ার করতে এই টেক্সটটি কপি করুন:", shareText)
+            );
+        }
+      }
+
+      // Download Results
+      function downloadResults() {
+        // Create a canvas to capture the result
+        const resultsElement = document.getElementById("resultsScreen");
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas size
+        canvas.width = resultsElement.offsetWidth;
+        canvas.height = resultsElement.offsetHeight;
+
+        // Create a temporary div to render the results for capture
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = resultsElement.innerHTML;
+        tempDiv.style.width = `${canvas.width}px`;
+        tempDiv.style.height = `${canvas.height}px`;
+        tempDiv.style.position = "absolute";
+        tempDiv.style.left = "-9999px";
+        document.body.appendChild(tempDiv);
+
+        // Use html2canvas library would be better here, but for simplicity using a basic approach
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#2c3e50";
+        ctx.font = "bold 30px Arial";
+        ctx.fillText("চদু ক্যালকুলেটর রেজাল্ট", 50, 50);
+
+        ctx.fillStyle = "#e74c3c";
+        ctx.font = "bold 60px Arial";
+        ctx.fillText(`স্কোর: ${state.score}%`, 50, 130);
+
+        ctx.fillStyle = "#333";
+        ctx.font = "20px Arial";
+        ctx.fillText(elements.resultTitle.textContent, 50, 180);
+
+        // Wrap text for description
+        const description = elements.resultDescription.textContent;
+        const maxWidth = canvas.width - 100;
+        const lineHeight = 25;
+        let y = 220;
+
+        const words = description.split(" ");
+        let line = "";
+
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line + words[i] + " ";
+          const metrics = ctx.measureText(testLine);
+          const testWidth = metrics.width;
+
+          if (testWidth > maxWidth && i > 0) {
             ctx.fillText(line, 50, y);
-            
-            // Create download link
-            const link = document.createElement('a');
-            link.download = `chodu-score-${state.score}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-            
-            // Clean up
-            document.body.removeChild(tempDiv);
+            line = words[i] + " ";
+            y += lineHeight;
+          } else {
+            line = testLine;
+          }
         }
+        ctx.fillText(line, 50, y);
 
-        function retakeQuiz() {
-            showScreen('start');
-        }
+        // Create download link
+        const link = document.createElement("a");
+        link.download = `chodu-score-${state.score}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
 
-        // Initialize the app
-        init();
+        // Clean up
+        document.body.removeChild(tempDiv);
+      }
+
+      function retakeQuiz() {
+        showScreen("start");
+      }
+
+      // Initialize the app
+      init();
     </script>
-</body>
+  </body>
 </html>
